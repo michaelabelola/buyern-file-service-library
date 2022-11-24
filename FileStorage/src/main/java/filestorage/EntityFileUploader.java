@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Data
@@ -64,8 +65,10 @@ public class EntityFileUploader {
             Map<String, String> response = new HashMap<>();
             response.put(file.getName(), jsonResponse.getBody().getObject().get("data").toString());
             return response;
-        }
-        throw new FileUploadException("Error Uploading file: " + jsonResponse.getBody().getObject().get("message").toString());
+        } else if (Objects.equals(jsonResponse.getBody().getObject().get("code").toString(), "05")) {
+            throw new FileUploadException("Entity Storage account not registered");
+        } else
+            throw new FileUploadException("Error Uploading file: " + jsonResponse.getBody().getObject().get("message").toString());
     }
 
     private Map<String, String> uploadAll() throws UnirestException {

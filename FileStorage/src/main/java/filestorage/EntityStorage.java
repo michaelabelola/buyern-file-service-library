@@ -19,10 +19,9 @@ public class EntityStorage {
 
         HttpResponse<JsonNode> jsonResponse = Unirest.post("http://localhost:9081/api/v1/entity/register/" + entityUid)
                 .headers(headers).asJson();
-
-        if (jsonResponse.getStatus() == 200 &&
-                (Objects.equals(jsonResponse.getBody().getObject().get("code").toString(), "00") ||
-                        Objects.equals(jsonResponse.getBody().getObject().get("code").toString(), "04"))) {
+        if (jsonResponse.getStatus() == 200 && Objects.equals(jsonResponse.getBody().getObject().get("code").toString(), "00")) {
+            return true;
+        } else if ( Objects.equals(jsonResponse.getBody().getObject().get("code").toString(), "04")){
             return true;
         } else
             throw new EntityStorageException("Error Registering Entity Storage: " + jsonResponse.getBody().getObject().get("message").toString());

@@ -11,6 +11,7 @@ plugins {
     id 'java-library'
 }
 
+sourceCompatibility = '17'
 version = '0.0.1'
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -24,7 +25,7 @@ dependencies {
     api 'org.apache.commons:commons-math3:3.6.1'
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:31.0.1-jre'
-    implementation 'com.mashape.unirest:unirest-java:1.4.9'
+    api 'com.mashape.unirest:unirest-java:1.4.9'
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     // logging
@@ -46,6 +47,7 @@ tasks.named('jar') {
 
 java {
     withJavadocJar()
+    withSourcesJar()
 }
 
 //test {

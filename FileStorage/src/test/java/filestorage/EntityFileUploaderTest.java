@@ -1,15 +1,19 @@
 package filestorage;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
 import filestorage.enums.Container;
+import filestorage.exceptions.FileUploadException;
 import filestorage.models.EntityFile;
 import filestorage.models.FileItem;
 import filestorage.models.MultipleEntityFile;
-import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +22,6 @@ import static org.junit.Assert.*;
 
 public class EntityFileUploaderTest {
     private final List<FileItem> fileItems = new ArrayList<>();
-
     @Before
     public void setUp() throws Exception {
         //create files
@@ -34,17 +37,19 @@ public class EntityFileUploaderTest {
     }
 
     @Test
-    public void uploadToEntityPublicContainer() {
+    public void uploadToEntityPublicContainer() throws UnirestException, IOException {
         File file = new File("testFile.txt");
+        FileWriter fileWriter = null;
         try {
-            FileWriter fileWriter = new FileWriter("testFile.txt");
-            fileWriter.write("test file");
+            fileWriter = new FileWriter("testFile.txt");
+
+        fileWriter.write("test file");
             fileWriter.close();
-            EntityFileUploader fileUploader = new EntityFileUploader(EntityFile.builder().entityUid("eUid").container(Container.PUBLIC).name("logo").file(file).build());
+            EntityFileUploader fileUploader = new EntityFileUploader(EntityFile.builder().entityUid("testEntity").container(Container.PUBLIC).name("logo").file(file).build());
             Map<String, String> location = fileUploader.upload();
-            assertEquals("http://194.35.120.40:10000/devstoreaccount1/euid/logo", location.get("logo"));
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            assertNotNull(location.get("logo"));
+        } catch (FileUploadException e) {
+            assertEquals("entity storage does not exist","", e.getMessage());
         }
     }
 
